@@ -1,34 +1,37 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { move, initialGameState, GameState } from './game'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [gameState, setGameState] = useState<GameState>(initialGameState)
+
+  const headerMessage = () => {
+    if(gameState.state === 'won') return `${gameState.currentPlayer} won!`
+    else if (gameState.state === 'tie') return `tie!`
+    else return `${gameState.currentPlayer}'s turn`
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <main className='flex flex-col gap-8'>
+      <span className='text-6xl font-bold'>{headerMessage()}</span>
+      <div className='grid grid-rows-3 grid-cols-3 gap-2'>
+        {gameState.board.map((cell, index) => {
+          return (
+            <button 
+              className='h-[200px] w-[200px] bg-gray-500 cursor-pointer hover:bg-gray-400'
+              onClick={() => {
+                const newGameState:GameState = move(gameState, index)
+                setGameState(newGameState)
+              }}
+            >
+              <span className='text-8xl font-bold'>
+                {gameState.board[index]}
+              </span>
+            </button>
+          )
+        })}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </main>
   )
 }
 
